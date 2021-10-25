@@ -2,7 +2,7 @@ name: Run OWASP dependency check and NodeJS vulnerability scanner
 
 on:
     push:
-        branches: [main]
+        branches: [master]
 
 jobs:
     post:
