@@ -7,6 +7,11 @@ on:
 jobs:
     post:
         runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [12.x]
+
         steps:
             - name: Check out source code
               uses: actions/checkout@v2
@@ -23,7 +28,13 @@ jobs:
               with:
                   sarif_file: results.sarif
 
-            # Snyk scanning implementation
+            # Snyk scanning implementation (need to install node app and modoules first)
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "npm"
+
             - name: Run Snyk to check for vulnerabilities
               uses: snyk/actions/node@master
               continue-on-error: true
