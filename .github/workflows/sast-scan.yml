@@ -1,0 +1,23 @@
+name: Run OWASP dependency check and NodeJS vulnerability scanner
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    post:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out source code
+              uses: actions/checkout@v2
+
+            - name: NodeJS Static Scan
+              id: njsscan
+              uses: ajinabraham/njsscan-action@master
+              with:
+                  args: ". --json --sarif --sonarqube --html -o njs_scan_results --missing-controls"
+
+            - name: List the reports or local files created
+              run: |
+                  pwd
+                  ls -la
