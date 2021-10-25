@@ -38,7 +38,6 @@ jobs:
             # Install the node modules and create package-lock.json file
             - name: Install the Node modules
               run: |
-                  pwd
                   npm install
                   npm install --package-lock
 
@@ -67,11 +66,23 @@ jobs:
               env:
                   SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
+            # Some checks before the uploading of files
+            - name: Check some stuff before uploading files
+              run: |
+                  echo ${{ github.workspace }}
+                  echo $GITHUB_WORKSPACE
+                  pwd
+                  ls -lah
+                  ls -lah report/
+                  ls -lah results.arif
+                  find report
+                  find .
+
             # Upload artifacts of the tools run
             - name: Upload artifacts of SAST results
               uses: actions/upload-artifact@v2
               with:
                   name: sast-reports
                   path: |
-                      "${{ github.workspace }}/report/"
-                      "${{ github.workspace }}/results.sarif"
+                      "report"
+                      "results.sarif"
