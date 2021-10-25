@@ -15,7 +15,12 @@ jobs:
               id: njsscan
               uses: ajinabraham/njsscan-action@master
               with:
-                  args: ". --html -o njs_scan_results.html --missing-controls"
+                  args: ". --sarif --output results.sarif || true"
+
+            - name: Upload NodeJS Static Scan report
+              uses: github/codeql-action/upload-sarif@v1
+              with:
+                  sarif_file: results.sarif
 
             - name: List the reports or local files created
               run: |
