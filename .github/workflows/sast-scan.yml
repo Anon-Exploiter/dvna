@@ -5,7 +5,7 @@ on:
         branches: [master]
 
 jobs:
-    post:
+    sast:
         runs-on: ubuntu-latest
 
         strategy:
@@ -31,36 +31,44 @@ jobs:
                   --scan $GITHUB_WORKSPACE \
                   --format "ALL" \
                   --project "dependency-check scan: $(pwd)" \
-                  --out /report
+                  --out "$GITHUB_WORKSPACE/report"
 
-            # # NodeJs Scanner
-            # - name: NodeJS Static Scan
-            #   id: njsscan
-            #   uses: ajinabraham/njsscan-action@master
-            #   with:
-            #       args: ". --sarif --output results.sarif || true"
+            # Run NodeJs Scanner
+            - name: NodeJS Static Scan
+              id: njsscan
+              uses: ajinabraham/njsscan-action@master
+              with:
+                  args: ". --sarif --output results.sarif || true"
 
-            # - name: Upload NodeJS Static Scan report
-            #   uses: github/codeql-action/upload-sarif@v1
-            #   with:
-            #       sarif_file: results.sarif
+            # Upload NodeJS Scanner results to CodeQL and create security alerts
+            - name: Upload NodeJS Static Scan report
+              uses: github/codeql-action/upload-sarif@v1
+              with:
+                  sarif_file: results.sarif
 
-            # # Snyk scanning implementation (need to install node app and modoules first)
-            # - name: Install build-essentials to fix bcrypt error with node
-            #   run: |
-            #       id
+            # Setup NodeJS to install modules for synk to look for
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
 
-            # - name: Use Node.js ${{ matrix.node-version }}
-            #   uses: actions/setup-node@v2
-            #   with:
-            #       node-version: ${{ matrix.node-version }}
+            # Install the node modules
+            - name: Install the Node modules
+              run: |
+                  npm install
 
-            # - name: Install the Node modules
-            #   run: |
-            #       npm install
+            # Check vulns using synk
+            - name: Run Snyk to check for vulnerabilities
+              uses: snyk/actions/node@master
+              continue-on-error: true
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-            # - name: Run Snyk to check for vulnerabilities
-            #   uses: snyk/actions/node@master
-            #   continue-on-error: true
-            #   env:
-            #       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+            # Upload artifacts of the tools run
+            - name: Upload artifacts of SAST results
+              uses: actions/upload-artifact@v2
+              with:
+                  name: sast-reports
+                  path: |
+                      "$GITHUB_WORKSPACE/report/"
+                      "$GITHUB_WORKSPACE/results.sarif"
