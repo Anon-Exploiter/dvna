@@ -15,7 +15,7 @@ jobs:
               id: njsscan
               uses: ajinabraham/njsscan-action@master
               with:
-                  args: ". --json --sarif --sonarqube --html -o njs_scan_results --missing-controls"
+                  args: ". --html -o njs_scan_results.html --missing-controls"
 
             - name: List the reports or local files created
               run: |
