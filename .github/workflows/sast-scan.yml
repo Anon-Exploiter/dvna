@@ -72,5 +72,5 @@ jobs:
               with:
                   name: sast-reports
                   path: |
-                      "$GITHUB_WORKSPACE/report/"
-                      "$GITHUB_WORKSPACE/results.sarif"
+                      "${{ github.workspace }}/report/"
+                      "${{ github.workspace }}/results.sarif"
