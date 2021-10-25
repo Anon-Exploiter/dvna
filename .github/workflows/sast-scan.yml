@@ -33,8 +33,8 @@ jobs:
             - name: Install build-essentials to fix bcrypt error with node
               run: |
                   id
-                  apt-get update -y
-                  apt-get install -y build-essential
+                  sudo apt-get update -y
+                  sudo apt-get install -y build-essential
 
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v2
