@@ -11,6 +11,7 @@ jobs:
             - name: Check out source code
               uses: actions/checkout@v2
 
+            # NodeJs Scanner
             - name: NodeJS Static Scan
               id: njsscan
               uses: ajinabraham/njsscan-action@master
@@ -22,7 +23,8 @@ jobs:
               with:
                   sarif_file: results.sarif
 
-            - name: List the reports or local files created
-              run: |
-                  pwd
-                  ls -la
+            # Snyk scanning implementation
+            - name: Run Snyk to check for vulnerabilities
+              uses: snyk/actions/node@master
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
