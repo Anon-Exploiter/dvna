@@ -29,6 +29,11 @@ jobs:
             #       sarif_file: results.sarif
 
             # Snyk scanning implementation (need to install node app and modoules first)
+
+            - name: Install build-essentials to fix bcrypt error with node
+              run: |
+                  apt-get install -y build-essential
+
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v2
               with:
@@ -37,8 +42,8 @@ jobs:
             - name: Install the Node modules
               run: npm install
 
-            - name: Run Snyk to check for vulnerabilities
-              uses: snyk/actions/node@master
-              continue-on-error: true
-              env:
-                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+            # - name: Run Snyk to check for vulnerabilities
+            #   uses: snyk/actions/node@master
+            #   continue-on-error: true
+            #   env:
+            #       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
