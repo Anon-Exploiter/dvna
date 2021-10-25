@@ -16,23 +16,6 @@ jobs:
             - name: Check out source code
               uses: actions/checkout@v2
 
-            # Download and setup OWASP Dependency check report
-            - name: Download and setup OWASP Dependency check
-              run: |
-                  download_link=`curl https://api.github.com/repos/jeremylong/DependencyCheck/releases/latest -s | grep browser_download_url | cut -d '"' -f4 | awk 'NR==1{print $1}'`
-                  echo $download_link
-                  wget $download_link -O /tmp/dependency-check.zip
-                  cd /tmp/ && unzip dependency-check.zip
-
-            # Run OWASP Dependency check
-            - name: Run OWASP Dependency check
-              run: |
-                  bash /tmp/dependency-check/bin/dependency-check.sh \
-                  --scan $GITHUB_WORKSPACE \
-                  --format "ALL" \
-                  --project "dependency-check scan: $(pwd)" \
-                  --out "$GITHUB_WORKSPACE/report"
-
             # Run NodeJs Scanner
             - name: NodeJS Static Scan
               id: njsscan
@@ -52,10 +35,29 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            # Install the node modules
+            # Install the node modules and create package-lock.json file
             - name: Install the Node modules
               run: |
                   npm install
+                  npm install --package-lock
+
+            # Download and setup OWASP Dependency check report
+            - name: Download and setup OWASP Dependency check
+              run: |
+                  download_link=`curl https://api.github.com/repos/jeremylong/DependencyCheck/releases/latest -s | grep browser_download_url | cut -d '"' -f4 | awk 'NR==1{print $1}'`
+                  echo $download_link
+                  wget $download_link -O /tmp/dependency-check.zip
+                  cd /tmp/ && unzip dependency-check.zip
+
+            # Run OWASP Dependency check
+            - name: Run OWASP Dependency check
+              run: |
+                  echo $GITHUB_WORKSPACE
+                  bash /tmp/dependency-check/bin/dependency-check.sh \
+                  --scan $GITHUB_WORKSPACE \
+                  --format "ALL" \
+                  --project "dependency-check scan: $(pwd)" \
+                  --out "$GITHUB_WORKSPACE/report"
 
             # Check vulns using synk
             - name: Run Snyk to check for vulnerabilities
