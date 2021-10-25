@@ -16,6 +16,24 @@ jobs:
             - name: Check out source code
               uses: actions/checkout@v2
 
+            # Download and setup OWASP Dependency check report
+            - name: Download and setup OWASP Dependency check
+              run: |
+                  sudo apt-get update -y
+                  sudo apt-get install -y wget curl zip unzip
+                  download_link=`curl https://api.github.com/repos/jeremylong/DependencyCheck/releases/latest -s | grep browser_download_url | cut -d '"' -f4 | awk 'NR==1{print $1}'`
+                  wget $download_link -O /tmp/dependency-check.zip
+                  unzip /tmp/dependency-check.zip
+
+            # Run OWASP Dependency check
+            - name: Run OWASP Dependency check
+              run: |
+                  bash ./tmp/dependency-check/bin/dependency-check.sh \
+                  --scan $GITHUB_WORKSPACE \
+                  --format "ALL" \
+                  --project "dependency-check scan: $(pwd)" \
+                  --out /report
+
             # NodeJs Scanner
             - name: NodeJS Static Scan
               id: njsscan
@@ -32,8 +50,6 @@ jobs:
             - name: Install build-essentials to fix bcrypt error with node
               run: |
                   id
-                  sudo apt-get update -y
-                  sudo apt-get install -y build-essential
 
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v2
