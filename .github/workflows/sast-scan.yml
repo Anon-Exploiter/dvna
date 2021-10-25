@@ -74,7 +74,7 @@ jobs:
                   pwd
                   ls -lah
                   ls -lah report/
-                  ls -lah results.arif
+                  ls -lah results.sarif
                   find report
                   find .
 
