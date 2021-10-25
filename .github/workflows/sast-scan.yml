@@ -38,6 +38,7 @@ jobs:
             # Install the node modules and create package-lock.json file
             - name: Install the Node modules
               run: |
+                  pwd
                   npm install
                   npm install --package-lock
 
