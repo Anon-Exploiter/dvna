@@ -27,7 +27,7 @@ jobs:
             # Run OWASP Dependency check
             - name: Run OWASP Dependency check
               run: |
-                  bash ./tmp/dependency-check/bin/dependency-check.sh \
+                  bash /tmp/dependency-check/bin/dependency-check.sh \
                   --scan $GITHUB_WORKSPACE \
                   --format "ALL" \
                   --project "dependency-check scan: $(pwd)" \
