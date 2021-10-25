@@ -16,20 +16,19 @@ jobs:
             - name: Check out source code
               uses: actions/checkout@v2
 
-            # # NodeJs Scanner
-            # - name: NodeJS Static Scan
-            #   id: njsscan
-            #   uses: ajinabraham/njsscan-action@master
-            #   with:
-            #       args: ". --sarif --output results.sarif || true"
+            # NodeJs Scanner
+            - name: NodeJS Static Scan
+              id: njsscan
+              uses: ajinabraham/njsscan-action@master
+              with:
+                  args: ". --sarif --output results.sarif || true"
 
-            # - name: Upload NodeJS Static Scan report
-            #   uses: github/codeql-action/upload-sarif@v1
-            #   with:
-            #       sarif_file: results.sarif
+            - name: Upload NodeJS Static Scan report
+              uses: github/codeql-action/upload-sarif@v1
+              with:
+                  sarif_file: results.sarif
 
             # Snyk scanning implementation (need to install node app and modoules first)
-
             - name: Install build-essentials to fix bcrypt error with node
               run: |
                   id
@@ -43,11 +42,10 @@ jobs:
 
             - name: Install the Node modules
               run: |
-                  npm install --save bcrypt-nodejs
                   npm install
 
-            # - name: Run Snyk to check for vulnerabilities
-            #   uses: snyk/actions/node@master
-            #   continue-on-error: true
-            #   env:
-            #       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+            - name: Run Snyk to check for vulnerabilities
+              uses: snyk/actions/node@master
+              continue-on-error: true
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
