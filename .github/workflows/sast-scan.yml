@@ -21,8 +21,8 @@ jobs:
               run: |
                   download_link=`curl https://api.github.com/repos/jeremylong/DependencyCheck/releases/latest -s | grep browser_download_url | cut -d '"' -f4 | awk 'NR==1{print $1}'`
                   echo $download_link
-                  wget $download_link -o /tmp/dependency-check.zip
-                  unzip /tmp/dependency-check.zip
+                  wget $download_link -O /tmp/dependency-check.zip
+                  cd /tmp/ && unzip dependency-check.zip
 
             # Run OWASP Dependency check
             - name: Run OWASP Dependency check
